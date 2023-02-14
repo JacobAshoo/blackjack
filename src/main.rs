@@ -2,16 +2,20 @@ use rand::seq::SliceRandom;
 use std::{collections::HashMap, fmt, io};
 use strfmt::strfmt;
 
+#[derive(Debug)]
 struct Card {
     value: String,
     suit: String,
 }
 
 fn main() {
-    init_deck();
+    let deck = init_deck();
+    for card in deck {
+        println!("{:?}", card);
+    }
 }
 
-fn init_deck() -> Vec<Vec<Card>> {
+fn init_deck() -> Vec<Card> {
     let blank = {
         "┌─────────┐
 │░░░░░░░░░│
@@ -49,7 +53,7 @@ fn init_deck() -> Vec<Vec<Card>> {
     // vars.insert("num".to_string(), "5");
     // vars.insert("suit".to_string(), "♠");
     // println!("{}", strfmt(&card_string, &vars).unwrap());
-    let card_map = HashMap::new();
+    let mut card_map = HashMap::new();
     card_map.insert("2".to_string(), 2);
     card_map.insert("3".to_string(), 3);
     card_map.insert("4".to_string(), 4);
@@ -68,7 +72,16 @@ fn init_deck() -> Vec<Vec<Card>> {
     let cards = [
         "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A",
     ];
-    for suit in suits {
-        for card in cards {}
+    let mut deck: Vec<Card> = Vec::new();
+    for i in 0..4 {
+        for suit in suits {
+            for card in cards {
+                deck.push(Card {
+                    value: card.to_string(),
+                    suit: suit.to_string(),
+                });
+            }
+        }
     }
+    return deck;
 }
