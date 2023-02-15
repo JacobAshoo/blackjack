@@ -1,21 +1,42 @@
-use rand::seq::SliceRandom;
+use rand::{seq::SliceRandom, thread_rng};
 use std::{collections::HashMap, fmt, io};
 use strfmt::strfmt;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Card {
     value: String,
     suit: String,
+    pub flipped_over: bool,
 }
 
 fn main() {
-    let deck = init_deck();
-    for card in deck {
-        println!("{:?}", card);
-    }
+    let mut deck = create_deck();
+    let mut wallet = 1000.0;
+    let mut player_hand: Vec<Card> = Vec::new();
+    let mut dealer_hand: Vec<Card> = Vec::new();
+
+    deal(&mut deck, &mut player_hand, &mut dealer_hand);
 }
 
-fn init_deck() -> Vec<Card> {
+fn deal(deck: &mut Vec<Card>, player_hand: &mut Vec<Card>, dealer_hand: &mut Vec<Card>) {
+    player_hand.push(deck[0].clone());
+    deck.rotate_right(1);
+    player_hand.push(deck[0].clone());
+    deck.rotate_right(1);
+
+    player_hand[0].flipped_over = false;
+    player_hand[1].flipped_over = false;
+
+    dealer_hand.push(deck[0].clone());
+    deck.rotate_right(1);
+    dealer_hand.push(deck[0].clone());
+    deck.rotate_right(1);
+
+    dealer_hand[0].flipped_over = false;
+    dealer_hand[1].flipped_over = true;
+}
+
+fn create_deck() -> Vec<Card> {
     let blank = {
         "┌─────────┐
 │░░░░░░░░░│
@@ -73,15 +94,17 @@ fn init_deck() -> Vec<Card> {
         "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A",
     ];
     let mut deck: Vec<Card> = Vec::new();
-    for i in 0..4 {
+    for _ in 0..4 {
         for suit in suits {
             for card in cards {
                 deck.push(Card {
                     value: card.to_string(),
                     suit: suit.to_string(),
+                    flipped_over: false,
                 });
             }
         }
     }
+    deck.shuffle(&mut thread_rng());
     return deck;
 }
