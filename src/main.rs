@@ -16,6 +16,18 @@ fn main() {
     let mut dealer_hand: Vec<Card> = Vec::new();
 
     deal(&mut deck, &mut player_hand, &mut dealer_hand);
+
+    for card in dealer_hand.iter() {
+        let str = create_card_string(&card);
+        println!("{}", str);
+    }
+}
+
+fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64) {
+    let frame = String::new();
+    for player_card in player_hand.iter() {
+        let card_string = create_card_string(player_card);
+    }
 }
 
 fn deal(deck: &mut Vec<Card>, player_hand: &mut Vec<Card>, dealer_hand: &mut Vec<Card>) {
@@ -107,4 +119,53 @@ fn create_deck() -> Vec<Card> {
     }
     deck.shuffle(&mut thread_rng());
     return deck;
+}
+
+fn create_card_string(card: &Card) -> String {
+    let blank = {
+        "┌─────────┐
+│░░░░░░░░░│
+│░░░░░░░░░│
+│░░░░░░░░░│
+│░░░░░░░░░│
+│░░░░░░░░░│
+│░░░░░░░░░│
+│░░░░░░░░░│
+└─────────┘"
+    };
+    let card_string = {
+        "┌─────────┐
+│{num}        │
+│         │
+│         │
+│    {suit}    │
+│         │
+│         │
+│       {num} │
+└─────────┘"
+    };
+    let ten_card_string = {
+        "┌─────────┐
+│{num}       │
+│         │
+│         │
+│    {suit}    │
+│         │
+│         │
+│       {num}│
+└─────────┘"
+    };
+    if card.flipped_over {
+        return blank.to_string();
+    }
+
+    let mut vars = HashMap::new();
+    vars.insert("suit".to_string(), card.suit.clone());
+    vars.insert("num".to_string(), card.value.clone());
+
+    if card.value == "10" {
+        return strfmt(&ten_card_string, &vars).unwrap();
+    }
+
+    return strfmt(&card_string, &vars).unwrap();
 }
