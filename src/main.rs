@@ -1,6 +1,7 @@
 use rand::{seq::SliceRandom, thread_rng};
 use std::{collections::HashMap, fmt, io};
 use strfmt::strfmt;
+use vector2d::Vector2D;
 
 #[derive(Debug, Clone)]
 struct Card {
@@ -16,17 +17,44 @@ fn main() {
     let mut dealer_hand: Vec<Card> = Vec::new();
 
     deal(&mut deck, &mut player_hand, &mut dealer_hand);
-
-    for card in dealer_hand.iter() {
-        let str = create_card_string(&card);
-        println!("{}", str);
-    }
+    display_frame(&player_hand, &dealer_hand, &wallet);
 }
 
 fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64) {
-    let frame = String::new();
-    for player_card in player_hand.iter() {
-        let card_string = create_card_string(player_card);
+    let mut frame: Vec<Vec<char>> = Vec::new();
+
+    let mut row = 0;
+    'row: while row < 9 {
+        let mut card_count = 0;
+        let mut row_vec: Vec<char> = Vec::new();
+
+        for dealer_card in dealer_hand {
+            let mut card_string = create_card_string(dealer_card);
+
+            for chr in card_string.chars() {
+                if chr == '\n' {
+                    if card_count == dealer_hand.len() {
+                        row_vec.push(chr);
+                        //remove the row
+                        card_string =
+                            card_string[card_string.find("\n").unwrap_or(card_string.len())
+                                ..card_string.len()]
+                                .to_string();
+                        break 'row;
+                    }
+                    row_vec.push(chr);
+                }
+                row_vec.push(' ');
+                card_count += 1;
+            }
+        }
+        frame.push(row_vec);
+        row += 1;
+    }
+    for row in frame.iter() {
+        for chr in row {
+            print!("{}", chr);
+        }
     }
 }
 
@@ -49,57 +77,10 @@ fn deal(deck: &mut Vec<Card>, player_hand: &mut Vec<Card>, dealer_hand: &mut Vec
 }
 
 fn create_deck() -> Vec<Card> {
-    let blank = {
-        "┌─────────┐
-│░░░░░░░░░│
-│░░░░░░░░░│
-│░░░░░░░░░│
-│░░░░░░░░░│
-│░░░░░░░░░│
-│░░░░░░░░░│
-│░░░░░░░░░│
-└─────────┘"
-    };
-    let card_string = {
-        "┌─────────┐
-│{num}        │
-│         │
-│         │
-│    {suit}    │
-│         │
-│         │
-│       {num} │
-└─────────┘"
-    };
-    let ten_card_string = {
-        "┌─────────┐
-│{num}       │
-│         │
-│         │
-│    {suit}   │
-│         │
-│         │
-│       {num}│
-└─────────┘"
-    };
     // let mut vars = HashMap::new();
     // vars.insert("num".to_string(), "5");
     // vars.insert("suit".to_string(), "♠");
     // println!("{}", strfmt(&card_string, &vars).unwrap());
-    let mut card_map = HashMap::new();
-    card_map.insert("2".to_string(), 2);
-    card_map.insert("3".to_string(), 3);
-    card_map.insert("4".to_string(), 4);
-    card_map.insert("5".to_string(), 5);
-    card_map.insert("6".to_string(), 6);
-    card_map.insert("7".to_string(), 7);
-    card_map.insert("8".to_string(), 8);
-    card_map.insert("9".to_string(), 9);
-    card_map.insert("10".to_string(), 10);
-    card_map.insert("J".to_string(), 10);
-    card_map.insert("Q".to_string(), 10);
-    card_map.insert("K".to_string(), 10);
-    card_map.insert("A".to_string(), 11);
 
     let suits = ["♠", "♦", "♥", "♣"];
     let cards = [
@@ -129,13 +110,13 @@ fn create_card_string(card: &Card) -> String {
 │░░░░░░░░░│
 │░░░░░░░░░│
 │░░░░░░░░░│
-│░░░░░░░░░│
-│░░░░░░░░░│
+│░░░░░░░░░│ 
+│░░░░░░░░░│ 
 └─────────┘"
     };
     let card_string = {
         "┌─────────┐
-│{num}        │
+│{num}        │ 
 │         │
 │         │
 │    {suit}    │

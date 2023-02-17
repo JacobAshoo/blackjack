@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 rand = "0.8.5"
 strfmt = "0.2.3"
+vector2d = "2.2.0"
