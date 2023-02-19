@@ -1,7 +1,8 @@
+use clearscreen;
+use crossterm;
 use rand::{seq::SliceRandom, thread_rng};
-use std::{collections::HashMap, fmt, io};
+use std::{collections::HashMap, fmt, io, thread, time};
 use strfmt::strfmt;
-use vector2d::Vector2D;
 
 #[derive(Debug, Clone)]
 struct Card {
@@ -21,6 +22,7 @@ fn main() {
 }
 
 fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64) {
+    clearscreen::clear().expect("failed to clear screen");
     let mut frame: Vec<Vec<char>> = Vec::new();
 
     let mut row = 0;
@@ -28,34 +30,74 @@ fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64)
         let mut card_count = 0;
         let mut row_vec: Vec<char> = Vec::new();
 
-        for dealer_card in dealer_hand {
-            let mut card_string = create_card_string(dealer_card);
+        'cards: for dealer_card in dealer_hand {
+            let card_string = create_card_string(dealer_card);
 
+            let mut num_lines = 0;
             for chr in card_string.chars() {
-                if chr == '\n' {
-                    if card_count == dealer_hand.len() {
-                        row_vec.push(chr);
-                        //remove the row
-                        card_string =
-                            card_string[card_string.find("\n").unwrap_or(card_string.len())
-                                ..card_string.len()]
-                                .to_string();
-                        break 'row;
+                if num_lines == row {
+                    if chr == '\n' {
+                        if card_count == dealer_hand.len() - 1 {
+                            row_vec.push('\n');
+                            num_lines += 1;
+                            break 'cards;
+                        }
+                        num_lines += 1;
+                        continue;
                     }
                     row_vec.push(chr);
                 }
-                row_vec.push(' ');
-                card_count += 1;
+                if chr == '\n' {
+                    num_lines += 1;
+                }
             }
+            card_count += 1;
         }
         frame.push(row_vec);
         row += 1;
     }
+
+    let tmp: Vec<char> = vec!['\n', '\n', '\n'];
+    frame.push(tmp);
+
+    let mut row = 0;
+    'row: while row < 9 {
+        let mut card_count = 0;
+        let mut row_vec: Vec<char> = Vec::new();
+
+        'cards: for player_card in player_hand {
+            let card_string = create_card_string(player_card);
+
+            let mut num_lines = 0;
+            for chr in card_string.chars() {
+                if num_lines == row {
+                    if chr == '\n' {
+                        if card_count == player_hand.len() - 1 {
+                            row_vec.push('\n');
+                            num_lines += 1;
+                            break 'cards;
+                        }
+                        num_lines += 1;
+                        continue;
+                    }
+                    row_vec.push(chr);
+                }
+                if chr == '\n' {
+                    num_lines += 1;
+                }
+            }
+            card_count += 1;
+        }
+        frame.push(row_vec);
+        row += 1;
+    }
+
     for row in frame.iter() {
         for chr in row {
             print!("{}", chr);
         }
     }
+    print!("       ${}\n", wallet);
 }
 
 fn deal(deck: &mut Vec<Card>, player_hand: &mut Vec<Card>, dealer_hand: &mut Vec<Card>) {
@@ -110,13 +152,13 @@ fn create_card_string(card: &Card) -> String {
 │░░░░░░░░░│
 │░░░░░░░░░│
 │░░░░░░░░░│
-│░░░░░░░░░│ 
-│░░░░░░░░░│ 
+│░░░░░░░░░│
+│░░░░░░░░░│
 └─────────┘"
     };
     let card_string = {
         "┌─────────┐
-│{num}        │ 
+│{num}        │
 │         │
 │         │
 │    {suit}    │
