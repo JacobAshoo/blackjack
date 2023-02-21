@@ -1,14 +1,14 @@
 use clearscreen;
 use crossterm;
 use rand::{seq::SliceRandom, thread_rng};
-use std::{collections::HashMap, fmt, io, thread, time};
+use std::{collections::HashMap, thread, time};
 use strfmt::strfmt;
 
 #[derive(Debug, Clone)]
 struct Card {
     value: String,
     suit: String,
-    pub flipped_over: bool,
+    flipped_over: bool,
 }
 
 fn main() {
@@ -18,7 +18,13 @@ fn main() {
     let mut dealer_hand: Vec<Card> = Vec::new();
 
     deal(&mut deck, &mut player_hand, &mut dealer_hand);
+    hit(&mut player_hand, &mut deck);
     display_frame(&player_hand, &dealer_hand, &wallet);
+}
+
+fn hit(hand: &mut Vec<Card>, deck: &mut Vec<Card>) {
+    hand.push(deck[0].clone());
+    deck.remove(0);
 }
 
 fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64) {
@@ -26,7 +32,7 @@ fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64)
     let mut frame: Vec<Vec<char>> = Vec::new();
 
     let mut row = 0;
-    'row: while row < 9 {
+    while row < 9 {
         let mut card_count = 0;
         let mut row_vec: Vec<char> = Vec::new();
 
@@ -61,7 +67,7 @@ fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64)
     frame.push(tmp);
 
     let mut row = 0;
-    'row: while row < 9 {
+    while row < 9 {
         let mut card_count = 0;
         let mut row_vec: Vec<char> = Vec::new();
 
@@ -102,17 +108,17 @@ fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64)
 
 fn deal(deck: &mut Vec<Card>, player_hand: &mut Vec<Card>, dealer_hand: &mut Vec<Card>) {
     player_hand.push(deck[0].clone());
-    deck.rotate_right(1);
+    deck.remove(0);
     player_hand.push(deck[0].clone());
-    deck.rotate_right(1);
+    deck.remove(0);
 
     player_hand[0].flipped_over = false;
     player_hand[1].flipped_over = false;
 
     dealer_hand.push(deck[0].clone());
-    deck.rotate_right(1);
+    deck.remove(0);
     dealer_hand.push(deck[0].clone());
-    deck.rotate_right(1);
+    deck.remove(0);
 
     dealer_hand[0].flipped_over = false;
     dealer_hand[1].flipped_over = true;
