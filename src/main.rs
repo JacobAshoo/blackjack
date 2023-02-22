@@ -1,7 +1,7 @@
 use clearscreen;
 use crossterm;
 use rand::{seq::SliceRandom, thread_rng};
-use std::{collections::HashMap, thread, time};
+use std::{collections::HashMap, io, io::Write, thread, time};
 use strfmt::strfmt;
 
 #[derive(Debug, Clone)]
@@ -17,14 +17,41 @@ fn main() {
     let mut player_hand: Vec<Card> = Vec::new();
     let mut dealer_hand: Vec<Card> = Vec::new();
 
-    deal(&mut deck, &mut player_hand, &mut dealer_hand);
-    hit(&mut player_hand, &mut deck);
-    display_frame(&player_hand, &dealer_hand, &wallet);
+    loop {
+        //make bet
+        clear_screan();
+        println!("wallet: ${}", wallet);
+        let mut input = String::new();
+        print!("bet: ");
+        io::stdout().flush().unwrap();
+        io::stdin().read_line(&mut input).expect("err");
+
+        let bet_result = input.trim().parse::<f64>();
+        let bet = match bet_result {
+            Ok(num) => num,
+            Err(e) => {
+                println!("not a num");
+                thread::sleep(time::Duration::from_secs(1));
+                clear_screan();
+                continue;
+            }
+        };
+        wallet -= bet;
+
+        //deal
+        deal(&mut deck, &mut player_hand, &mut dealer_hand);
+        display_frame(&player_hand, &dealer_hand, &wallet);
+        thread::sleep(time::Duration::from_secs(3));
+    }
 }
 
 fn hit(hand: &mut Vec<Card>, deck: &mut Vec<Card>) {
     hand.push(deck[0].clone());
     deck.remove(0);
+}
+
+fn clear_screan() {
+    clearscreen::clear().expect("failed to clear screen");
 }
 
 fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64) {
