@@ -41,8 +41,58 @@ fn main() {
         //deal
         deal(&mut deck, &mut player_hand, &mut dealer_hand);
         display_frame(&player_hand, &dealer_hand, &wallet);
-        thread::sleep(time::Duration::from_secs(3));
+        println!("{}", count_hand(&player_hand));
+        thread::sleep(time::Duration::from_secs(7));
+
+        //read user input
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
     }
+}
+
+fn count_hand(hand: &Vec<Card>) -> i32 {
+    let value_map = HashMap::from([
+        ("2".to_string(), 2),
+        ("3".to_string(), 3),
+        ("4".to_string(), 4),
+        ("5".to_string(), 5),
+        ("6".to_string(), 6),
+        ("7".to_string(), 7),
+        ("8".to_string(), 8),
+        ("9".to_string(), 9),
+        ("T".to_string(), 10),
+        ("J".to_string(), 10),
+        ("Q".to_string(), 10),
+        ("K".to_string(), 10),
+        ("A".to_string(), 11),
+    ]);
+
+    let mut total = 0;
+    for card in hand {
+        total += value_map[&card.value.to_string()];
+    }
+    if !contains_ace(&hand) || (contains_ace(&hand) && total <= 21) {
+        return total;
+    }
+    // hand has an ace and total is over 21
+    total = 0;
+    for card in hand {
+        if card.value == "A".to_string() {
+            total += 1;
+            continue;
+        }
+        total += value_map[&card.value.to_string()];
+    }
+    return total;
+}
+
+fn contains_ace(hand: &Vec<Card>) -> bool {
+    for card in hand {
+        if card.value == "A" {
+            return true;
+        }
+    }
+    return false;
 }
 
 fn hit(hand: &mut Vec<Card>, deck: &mut Vec<Card>) {
