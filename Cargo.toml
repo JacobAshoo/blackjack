@@ -7,9 +7,7 @@ edition = "2021"
 
 [dependencies]
 clearscreen = "2.0.0"
-crossterm = "0.26.0"
 device_query = "1.1.2"
 rand = "0.8.5"
 spin_sleep = "1.1.1"
 strfmt = "0.2.3"
-vector2d = "2.2.0"

@@ -15,7 +15,7 @@ struct Card {
 fn main() {
     let mut deck = create_deck();
     let mut wallet = 1000.0;
-    let spin_sleeper = spin_sleep::SpinSleeper::new(100_000)
+    let _spin_sleeper = spin_sleep::SpinSleeper::new(100_000)
         .with_spin_strategy(spin_sleep::SpinStrategy::YieldThread);
 
     'main: loop {
