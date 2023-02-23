@@ -213,7 +213,6 @@ fn clear_screan() {
 
 fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64) {
     clearscreen::clear().expect("failed to clear screen");
-    println!("{}", count_hand(&dealer_hand));
     let mut frame: Vec<Vec<char>> = Vec::new();
 
     let mut row = 0;
