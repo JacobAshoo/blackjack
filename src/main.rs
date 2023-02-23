@@ -94,7 +94,6 @@ fn main() {
         //dealer loop
         loop {
             spin_sleep::sleep(Duration::new(2, 12_550_000));
-            hit(&mut dealer_hand, &mut deck);
             display_frame(&player_hand, &dealer_hand, &wallet);
 
             let dealer_total = count_hand(&dealer_hand);
@@ -112,7 +111,7 @@ fn main() {
                         continue 'main;
                     }
                     println!("You win ${}", bet);
-                    wallet += bet;
+                    wallet += bet * 2.0;
                     spin_sleep::sleep(Duration::new(3, 12_550_000));
                     continue 'main;
                 }
@@ -153,6 +152,7 @@ fn main() {
                     continue 'main;
                 }
             }
+            hit(&mut dealer_hand, &mut deck);
         }
     }
 }
@@ -213,6 +213,7 @@ fn clear_screan() {
 
 fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64) {
     clearscreen::clear().expect("failed to clear screen");
+    println!("{}", count_hand(&dealer_hand));
     let mut frame: Vec<Vec<char>> = Vec::new();
 
     let mut row = 0;
