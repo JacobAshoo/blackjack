@@ -310,11 +310,6 @@ fn deal(deck: &mut Vec<Card>, player_hand: &mut Vec<Card>, dealer_hand: &mut Vec
 }
 
 fn create_deck() -> Vec<Card> {
-    // let mut vars = HashMap::new();
-    // vars.insert("num".to_string(), "5");
-    // vars.insert("suit".to_string(), "♠");
-    // println!("{}", strfmt(&card_string, &vars).unwrap());
-
     let suits = ["♠", "♦", "♥", "♣"];
     let cards = [
         "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A",
