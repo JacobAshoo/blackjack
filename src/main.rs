@@ -2,7 +2,7 @@ use clearscreen;
 use device_query::{DeviceQuery, DeviceState, Keycode};
 use rand::{seq::SliceRandom, thread_rng};
 use spin_sleep;
-use std::{collections::HashMap, io, io::Write, thread, time};
+use std::{collections::HashMap, io, io::Write, time::Duration};
 use strfmt::strfmt;
 
 #[derive(Debug, Clone)]
@@ -36,7 +36,7 @@ fn main() {
             Ok(num) => {
                 if num > wallet {
                     println!("your too broke");
-                    thread::sleep(time::Duration::from_secs(1));
+                    spin_sleep::sleep(Duration::new(2, 12_550_000));
                     continue;
                 }
                 num
@@ -44,7 +44,7 @@ fn main() {
             Err(_e) => {
                 println!("not a num");
                 println!("{}", input);
-                thread::sleep(time::Duration::from_secs(1));
+                spin_sleep::sleep(Duration::new(3, 12_550_000));
                 clear_screan();
                 continue;
             }
@@ -72,13 +72,13 @@ fn main() {
                 if count_hand(&player_hand) > 21 {
                     println!("You bust");
                     println!("You lose ${}", bet);
-                    thread::sleep(time::Duration::from_secs(1));
+                    spin_sleep::sleep(Duration::new(3, 12_550_000));
                     continue 'main;
                 }
 
                 //blackjack
                 if count_hand(&player_hand) == 21 {
-                    thread::sleep(time::Duration::from_secs(1));
+                    spin_sleep::sleep(Duration::new(3, 12_550_000));
                     break;
                 }
             }
@@ -93,7 +93,7 @@ fn main() {
 
         //dealer loop
         loop {
-            thread::sleep(time::Duration::from_secs(1));
+            spin_sleep::sleep(Duration::new(2, 12_550_000));
             hit(&mut dealer_hand, &mut deck);
             display_frame(&player_hand, &dealer_hand, &wallet);
 
@@ -108,12 +108,12 @@ fn main() {
                         println!("WINNER WINNER CHICKEN DINNER");
                         println!("You win ${}", bet * 1.5);
                         wallet += bet * 2.5;
-                        thread::sleep(time::Duration::from_secs(1));
+                        spin_sleep::sleep(Duration::new(3, 12_550_000));
                         continue 'main;
                     }
                     println!("You win ${}", bet);
                     wallet += bet;
-                    thread::sleep(time::Duration::from_secs(1));
+                    spin_sleep::sleep(Duration::new(3, 12_550_000));
                     continue 'main;
                 }
 
@@ -126,14 +126,14 @@ fn main() {
                         println!("WINNER WINNER CHICKEN DINNER");
                         println!("You win ${}", bet * 1.5);
                         wallet += bet * 2.5;
-                        thread::sleep(time::Duration::from_secs(1));
+                        spin_sleep::sleep(Duration::new(3, 12_550_000));
                         continue 'main;
                     }
                     // not blackjack but player still wins
                     println!("You win");
                     println!("You win ${}", bet);
                     wallet += bet * 2.0;
-                    thread::sleep(time::Duration::from_secs(1));
+                    spin_sleep::sleep(Duration::new(3, 12_550_000));
                     continue 'main;
                 }
 
@@ -141,7 +141,7 @@ fn main() {
                 if dealer_total > player_total {
                     println!("You lose");
                     println!("You lose ${}", bet);
-                    thread::sleep(time::Duration::from_secs(1));
+                    spin_sleep::sleep(Duration::new(3, 12_550_000));
                     continue 'main;
                 }
 
@@ -149,7 +149,7 @@ fn main() {
                 if dealer_total == player_total {
                     println!("Tie");
                     wallet += bet;
-                    thread::sleep(time::Duration::from_secs(1));
+                    spin_sleep::sleep(Duration::new(3, 12_550_000));
                     continue 'main;
                 }
             }
@@ -288,7 +288,7 @@ fn display_frame(player_hand: &Vec<Card>, dealer_hand: &Vec<Card>, wallet: &f64)
         }
     }
     print!("       ${}\n", wallet);
-    println!("{}", count_hand(&player_hand));
+    println!("={}", count_hand(&player_hand));
 }
 
 fn deal(deck: &mut Vec<Card>, player_hand: &mut Vec<Card>, dealer_hand: &mut Vec<Card>) {
