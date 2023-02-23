@@ -61,7 +61,7 @@ fn main() {
             let keys: Vec<Keycode> = device_state.get_keys();
 
             //wait a bit
-            for _i in 0..20000000 {}
+            for _i in 0..15000000 {}
 
             //hit
             if keys.contains(&Keycode::H) {
